@@ -15,7 +15,29 @@
 
 ## Dependencies ----
 ## Add one line by package you want to add as dependency
-usethis::use_package( "thinkr" )
+usethis::use_package('gridExtra')
+usethis::use_package('grid')
+usethis::use_package('ggplot2')
+usethis::use_package('umap')
+usethis::use_package('dplyr')
+usethis::use_package('reshape')
+usethis::use_package('RColorBrewer')
+usethis::use_package('cytofkit')
+usethis::use_package('FlowSOM')
+usethis::use_package('Rtsne')
+usethis::use_package('ggdendro')
+usethis::use_package('plotly')
+usethis::use_package('shiny')
+usethis::use_package('shinycssloaders')
+usethis::use_package('monocle')
+usethis::use_package('shinydashboard')
+usethis::use_package('DT')
+usethis::use_package('flowCore')
+usethis::use_package('openCyto')
+usethis::use_package('ggsci')
+usethis::use_package('rhandsontable')
+usethis::use_package('shinyBS')
+
 
 ## Add modules ----
 ## Create a module infrastructure in R/
