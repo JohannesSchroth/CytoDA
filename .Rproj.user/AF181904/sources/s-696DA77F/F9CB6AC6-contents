@@ -16,10 +16,10 @@ golem::fill_desc(
   pkg_name = "CytoDA", 
   pkg_title = "Cytometry Data Analysis",
   pkg_description = "Flow cytometry data analysis and interactive visualisation using common dimensionality reduction and clustering algorithms.",
-  author_first_name = "AUTHOR_FIRST",
-  author_last_name = "AUTHOR_LAST",
-  author_email = "AUTHOR@MAIL.COM",
-  repo_url = NULL 
+  author_first_name = "Johannes",
+  author_last_name = "Schroth",
+  author_email = "johannesschroth11@gmail.com",
+  repo_url = "https://github.com/JohannesSchroth/CytoDA"
 )     
 
 ## Set {golem} options ----
