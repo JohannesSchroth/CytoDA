@@ -11,16 +11,15 @@
 #### CURRENT FILE: ON START SCRIPT #####
 ########################################
 
-## Fill the DESCRIPTION ----
-## Add meta data about your application
+## DESCRIPTION ----
 golem::fill_desc(
-  pkg_name = "CytoDA", # The Name of the package containing the App 
-  pkg_title = "PKG_TITLE", # The Title of the package containing the App 
-  pkg_description = "PKG_DESC.", # The Description of the package containing the App 
-  author_first_name = "AUTHOR_FIRST", # Your First Name
-  author_last_name = "AUTHOR_LAST", # Your Last Name
-  author_email = "AUTHOR@MAIL.COM", # Your Email
-  repo_url = NULL # The URL of the GitHub Repo (optional) 
+  pkg_name = "CytoDA", 
+  pkg_title = "Cytometry Data Analysis",
+  pkg_description = "Flow cytometry data analysis and interactive visualisation using common dimensionality reduction and clustering algorithms.",
+  author_first_name = "Johannes",
+  author_last_name = "Schroth",
+  author_email = "johannesschroth11@gmail.com",
+  repo_url = "https://github.com/JohannesSchroth/CytoDA"
 )     
 
 ## Set {golem} options ----
