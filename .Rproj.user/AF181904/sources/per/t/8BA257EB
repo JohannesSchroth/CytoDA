@@ -2,18 +2,18 @@
     "collab_server" : "",
     "contents" : "",
     "created" : 1583502721980.000,
-    "dirty" : true,
+    "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "0",
+    "hash" : "864980118",
     "id" : "8BA257EB",
-    "lastKnownWriteTime" : 1583501728,
-    "last_content_update" : 1583503701860,
+    "lastKnownWriteTime" : 1583504841,
+    "last_content_update" : 1583504841930,
     "path" : "~/Dropbox/Projects/GitHub/CytoDA/dev/02_dev.R",
     "project_path" : "dev/02_dev.R",
     "properties" : {
-        "cursorPosition" : "63,0",
-        "scrollLine" : "56"
+        "cursorPosition" : "43,29",
+        "scrollLine" : "37"
     },
     "read_only" : false,
     "read_only_alternatives" : [
