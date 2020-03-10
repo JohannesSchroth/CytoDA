@@ -14,24 +14,26 @@ app_server <- function(input, output, session) {
     
     rv$raw_data <- flowCore::read.flowSet(files = input$file$datapath)
     
-    channels <- pData(parameters(raw_data[[1]]))$name
-    antibodies <- pData(parameters(raw_data[[1]]))$desc
+    channels <- pData(parameters(rv$raw_data[[1]]))$name
     
-    if (length(rv$raw_data > 1)) {
+    antibodies <- pData(parameters(rv$raw_data[[1]]))$desc
+    
+    rv$suggested_colnames <- sapply(1:length(antibodies), function(i){
+      if(is.na(antibodies[i])|antibodies[i]=="NA"){return(channels[i])}else{antibodies[i]}
+    })
+    
+    
+    if (length(rv$raw_data) > 1) {
       
-      set
-      
-      
-      
-        
+      rv$raw_data <- fs_to_ff(fs = rv$raw_data)
       
     }
     
     
     
     if(input$logicletransform) {
-      vars <- flowCore::colnames(rv$raw_data[[1]])[-grep('SSC|FSC|Time|Sample|Group', flowCore::colnames(rv$raw_data[[1]]))]
-      rv$raw_data[[i]] <- flowCore::transform(rv$raw_data[[i]], flowCore::estimateLogicle(rv$raw_data[[i]], channels = vars))
+      vars <- flowCore::colnames(rv$raw_data)[-grep('SSC|FSC|Time|Sample|Group', flowCore::colnames(rv$raw_data))]
+      rv$raw_data <- flowCore::transform(rv$raw_data, flowCore::estimateLogicle(rv$raw_data, channels = vars))
     }
     
     
@@ -61,8 +63,8 @@ app_server <- function(input, output, session) {
     }
     
     edit_colnames_table <- data.frame(
-      Current = colnames(rv$raw_data),
-      New = colnames(rv$raw_data),
+      Current = channels,
+      New = rv$suggested_colnames,
       Include = TRUE,
       stringsAsFactors = FALSE
     )
