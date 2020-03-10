@@ -4,31 +4,40 @@ packages_1 <- c('gridExtra','grid', 'ggplot2', 'umap', 'dplyr', 'reshape', 'RCol
                 'FlowSOM', 'Rtsne', 'ggdendro', 'plotly', 'shiny', 'plotly', 'shinycssloaders', 'monocle',
                 'shinydashboard', 'DT', 'flowCore', 'openCyto', 'ggsci', 'rhandsontable', 'shinyBS')
 lapply(packages_1,library, character.only=TRUE)
-
+library(flowCore)
 
 app_server <- function(input, output, session) {
+  
+  rv <- reactiveValues()
   
   observeEvent(input$upload_data, {
     
     rv$raw_data <- flowCore::read.flowSet(files = input$file$datapath)
     
-    vars <- colnames(rv$raw_data)[-grep('SSC|FSC|Time|Sample|Group', colnames(rv$raw_data))]
+    channels <- pData(parameters(raw_data[[1]]))$name
+    antibodies <- pData(parameters(raw_data[[1]]))$desc
     
-    if (input$logicletransform) {
+    if (length(rv$raw_data > 1)) {
       
-      for (i in 1:length(rv$raw_data)) {
-        rv$raw_data[[i]] <- transform(rv$raw_data[[i]], flowCore::estimateLogicle(rv$raw_data[[i]], vars))
-      }
+      set
       
-    } else {
-      NULL
+      
+      
+        
+      
     }
     
-    rv$raw_data <- flowSet(rv$raw_data[[1]])
     
-    rv$raw_data <- as.data.frame(flowCore::exprs(rv$raw_data[[1]]))
     
-    if (any(colnames(rv$raw_data) == 'SampleID') == TRUE) {
+    if(input$logicletransform) {
+      vars <- flowCore::colnames(rv$raw_data[[1]])[-grep('SSC|FSC|Time|Sample|Group', flowCore::colnames(rv$raw_data[[1]]))]
+      rv$raw_data[[i]] <- flowCore::transform(rv$raw_data[[i]], flowCore::estimateLogicle(rv$raw_data[[i]], channels = vars))
+    }
+    
+    
+    rv$raw_data <- as.data.frame(flowCore::exprs(rv$raw_data))
+    
+    if (any(flowCore::colnames(rv$raw_data) == 'SampleID') == TRUE) {
       
       dens <- density(rv$raw_data$SampleID, n = length(rv$raw_data$SampleID))
       samples <- pastecs::turnpoints(ts(dens$y))$pits
@@ -69,6 +78,7 @@ app_server <- function(input, output, session) {
   
   observeEvent(input$upload_data, {
     
+    removeModal()
     showModal(modalDialog(
       tagList(
         rHandsontableOutput('edit_colnames',width = '600px')
