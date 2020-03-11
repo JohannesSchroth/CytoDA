@@ -47,13 +47,17 @@ golem::add_module(name = "name_of_module2" ) # Name of the module
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
-golem::add_fct('fs_to_ff') 
+golem::add_fct('fs_to_ff')
+golem::add_fct('transform_data')
+golem::add_fct('edit_samplenames')
+golem::add_fct('edit_colnames')
+
 golem::add_utils( "helpers" )
 
 
 ## Add internal datasets ----
 ## If you have data in your package
-usethis::use_data_raw( name = "my_dataset", open = FALSE ) 
+usethis::use_data_raw(name = "my_dataset", open = FALSE ) 
 
 ## Tests ----
 ## Add one line by test you want to create

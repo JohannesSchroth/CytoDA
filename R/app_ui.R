@@ -24,7 +24,7 @@ app_ui <- function(request) {
                                        
                                        fluidRow(column(5, verbatimTextOutput("file"))),
                                        
-                                       checkboxInput('logicletransform', 'Transform data', TRUE),
+                                       selectInput('transformation_method', 'Select Transformation Method', c('Logicle', 'Biexponential'), multiple = F),
                                        
                                        actionButton('upload_data', 'Upload')),
                                      

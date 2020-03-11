@@ -12,107 +12,37 @@ app_server <- function(input, output, session) {
   
   observeEvent(input$upload_data, {
     
-    rv$raw_data <- flowCore::read.flowSet(files = input$file$datapath)
+    rv$flowset <- flowCore::read.flowSet(files = input$file$datapath)
     
-    channels <- pData(parameters(rv$raw_data[[1]]))$name
+    rv$flowframe <- fs_to_ff(fs = rv$flowset)
     
-    antibodies <- pData(parameters(rv$raw_data[[1]]))$desc
+    rv$flowframe_transformed <- transform_data(ff = rv$flowframe, method = input$transformation_method)
     
-    rv$suggested_colnames <- sapply(1:length(antibodies), function(i){
-      if(is.na(antibodies[i])|antibodies[i]=="NA"){return(channels[i])}else{antibodies[i]}
-    })
+    rv$raw_data <- as.data.frame(flowCore::exprs(rv$flowframe_transformed))
     
-    
-    if (length(rv$raw_data) > 1) {
-      
-      rv$raw_data <- fs_to_ff(fs = rv$raw_data)
-      
-    }
-    
-    
-    
-    if(input$logicletransform) {
-      vars <- flowCore::colnames(rv$raw_data)[-grep('SSC|FSC|Time|Sample|Group', flowCore::colnames(rv$raw_data))]
-      rv$raw_data <- flowCore::transform(rv$raw_data, flowCore::estimateLogicle(rv$raw_data, channels = vars))
-    }
-    
-    
-    rv$raw_data <- as.data.frame(flowCore::exprs(rv$raw_data))
-    
-    if (any(flowCore::colnames(rv$raw_data) == 'SampleID') == TRUE) {
-      
-      dens <- density(rv$raw_data$SampleID, n = length(rv$raw_data$SampleID))
-      samples <- pastecs::turnpoints(ts(dens$y))$pits
-      
-      for (i in 0:length(dens$x[samples]-1)) {
-        rv$raw_data[rv$raw_data$SampleID > 
-                      if (i == 0) {1} else {
-                        dens$x[samples][i]},'Sample'] <- i+1
-      }
-      
-      
-      edit_sample_names_table <- data.frame(Sample = as.character(unique(rv$raw_data$Sample)),
-                                            Name = unique(rv$raw_data$Sample))
-      
-      output$sample_names <- renderRHandsontable(
-        rhandsontable(edit_sample_names_table) %>%
-          hot_col('Name', strict = F)
-      )
-      
-      
-    }
-    
-    edit_colnames_table <- data.frame(
-      Current = channels,
-      New = rv$suggested_colnames,
-      Include = TRUE,
-      stringsAsFactors = FALSE
-    )
-    
-    output$edit_colnames <- renderRHandsontable(
-      rhandsontable(edit_colnames_table) %>%
-        hot_col('Include', 'checkbox')
-    )
-    
+    showModal(edit_samplenames(data = rv$raw_data, input, output, session))
     
   })
   
-  
-  observeEvent(input$upload_data, {
+  observeEvent(input$submit_samplenames, {
     
     removeModal()
-    showModal(modalDialog(
-      tagList(
-        rHandsontableOutput('edit_colnames',width = '600px')
-      ), 
-      title='Specify Column Names:',
-      footer = tagList(actionButton('submit_colnames', 'Submit'),
-                       modalButton("Cancel")
-      )
-    )
-    )
+    
+    new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
+    
+    rv$raw_data$SampleID <- as.character(new_sample_names[,2][match(rv$raw_data$SampleID, new_sample_names[,1])])
+    
+    showModal(edit_colnames(data = rv$raw_data, fs = rv$flowset, input, output, session))
+
   })
-  
   
   observeEvent(input$submit_colnames, {
     
-    
-    removeModal()
-    showModal(modalDialog(
-      tagList(
-        rHandsontableOutput('sample_names',width = '600px')
-      ), 
-      title='Specify Sample Names:',
-      footer = tagList(actionButton('submit_samplenames', 'Submit'),
-                       modalButton("Cancel")
-      )
-    )
-    )
     removeModal()
     
     new_colnames <- as.data.frame(hot_to_r(input$edit_colnames))
     
-    colnames(rv$raw_data) <- new_colnames[,2]
+    colnames(rv$raw_data) <- c(new_colnames[,2])
     rv$raw_data <- rv$raw_data[,as.logical(as.vector(new_colnames[,3]))]
     
     updateSelectInput(session = session, inputId = 'variables_pca', label = paste("Variables"), choices = colnames(rv$raw_data))
@@ -153,52 +83,17 @@ app_server <- function(input, output, session) {
                          modalButton("Cancel"))
       )
     )
-  })
-  
-  
-  observeEvent(input$submit_samplenames, {
     
-    removeModal()
     
-    new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
     
-    for (i in 1:length(new_sample_names[,1])) {
+    observeEvent(input$submit_downsample, {
       
-      rv$raw_data[as.character(rv$raw_data$Sample) == new_sample_names[i,1], 'Group'] <- as.character(new_sample_names[i,2])
+      rv$raw_data <- rv$raw_data[sample(nrow(rv$raw_data), input$n_downsample),]
       
-    }
-    
-    
-    
+      removeModal()
+      
+    })
   })
-  
-  
-  observeEvent(input$submit_downsample, {
-    
-    rv$raw_data <- rv$raw_data[sample(nrow(rv$raw_data), input$n_downsample),]
-    
-    removeModal()
-    
-  })
-  
-  
-  normalise <- function(data) {
-    
-    dat <- c()
-    
-    q <- quantile(data, c(0.01, 0.99))
-    
-    for (j in 1:length(data)) {
-      dat[j] <- (data[j] - q[1])/(q[2]-q[1])
-    }
-    dat[dat < 0] <- 0
-    dat[dat > 1] <- 1
-    
-    return(as.numeric(dat))
-    
-  }
-  
-  
   
   
   ##Dim Reduction Methods----

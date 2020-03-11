@@ -14,6 +14,23 @@ which <- function(){
 }
 
 
+normalise <- function(data) {
+  
+  dat <- c()
+  
+  q <- quantile(data, c(0.01, 0.99))
+  
+  for (j in 1:length(data)) {
+    dat[j] <- (data[j] - q[1])/(q[2]-q[1])
+  }
+  dat[dat < 0] <- 0
+  dat[dat > 1] <- 1
+  
+  return(as.numeric(dat))
+  
+}
+
+
 
 
 
