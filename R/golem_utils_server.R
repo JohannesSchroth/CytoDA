@@ -5,7 +5,7 @@
 rv <- reactiveValues()
 
 #' Poltly selected function
-which <- function(){
+which_selected <- function(){
   
   d <- event_data("plotly_selected")
   

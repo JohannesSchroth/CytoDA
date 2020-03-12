@@ -20,20 +20,24 @@ app_server <- function(input, output, session) {
     
     rv$raw_data <- as.data.frame(flowCore::exprs(rv$flowframe_transformed))
     
-    showModal(edit_samplenames(data = rv$raw_data, input, output, session))
+    s <- edit_samplenames(data = rv$raw_data, input, output, session)
     
-  })
-  
-  observeEvent(input$submit_samplenames, {
+    rv$raw_data['SampleID'] <- s[[1]]
     
-    removeModal()
+    showModal(s[[2]])
     
-    new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
+    observeEvent(input$submit_samplenames, {
+      
+      removeModal()
+      
+      new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
+      
+      rv$raw_data$SampleID <- as.character(new_sample_names$Name[match(rv$raw_data$SampleID, new_sample_names$Sample)])
+      
+      showModal(edit_colnames(data = rv$raw_data, fs = rv$flowset, input, output, session))
+      
+    })
     
-    rv$raw_data$SampleID <- as.character(new_sample_names[,2][match(rv$raw_data$SampleID, new_sample_names[,1])])
-    
-    showModal(edit_colnames(data = rv$raw_data, fs = rv$flowset, input, output, session))
-
   })
   
   observeEvent(input$submit_colnames, {
@@ -200,7 +204,7 @@ app_server <- function(input, output, session) {
       
       selected <- sapply(rv$raw_data[,input$variables_tsne],normalise)
       
-      selected <- selected[which(),] %>%
+      selected <- selected[which_selected(),] %>%
         as.data.frame() %>%
         summarise_all(median) %>%
         tibble::add_column(Clusters = 'Selected', .before = 1)

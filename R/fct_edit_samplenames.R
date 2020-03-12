@@ -3,22 +3,23 @@
 #' @return 
 #' 
 
-edit_samplenames <- function(data = NULL, input, output, session) {
+edit_samplenames <- function(data = NULL, input, output, session, ...) {
   
   if (any(flowCore::colnames(data) == 'SampleID') == TRUE) {
     
     dens <- density(data$SampleID, n = length(data$SampleID))
-    s <- pastecs::turnpoints(ts(dens$y))$pits
+    turn <- pastecs::turnpoints(ts(dens$y))$pits
     
-    s <- c(0, unique(s), length(s))
+    s <- as.integer(diff(c(0, which(turn), length(data$SampleID))))
     
-    sample <- sapply(1:length(s), function(i) rep(paste('Sample',i),s[i])) %>%
-      unlist()
+    samplename <- list()
     
-    data$SampleID <- sample[1:length(data$SampleID)]
+    samples <- unlist(lapply('Sample', paste, 1:length(s)))
     
-    edit_sample_names_table <- data.frame(Sample = as.character(unique(data$SampleID)),
-                                          Name = unique(data$SampleID))
+    samplename[[1]] <- rep(x = samples, times = s)
+    
+    edit_sample_names_table <- data.frame(Sample = as.character(unique(samplename[[1]])),
+                                          Name = unique(samplename[[1]]))
     
     output$sample_names <- renderRHandsontable(
       rhandsontable(edit_sample_names_table) %>%
@@ -26,7 +27,7 @@ edit_samplenames <- function(data = NULL, input, output, session) {
     )
     
     
-    samplename_modal <-
+    samplename[[2]] <-
       
       modalDialog(
         
@@ -40,7 +41,7 @@ edit_samplenames <- function(data = NULL, input, output, session) {
       )
     
     
-    return(samplename_modal)
+    return(samplename)
     
   }
 }
