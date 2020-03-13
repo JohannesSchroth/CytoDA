@@ -31,6 +31,16 @@ normalise <- function(data) {
 }
 
 
+pairwise_plot <- function(data, mapping) {
+  p <- ggplot(data = data, mapping = mapping) +
+    geom_hex(bins = 30) +
+    theme_classic() +
+    theme(axis.text = element_blank(),
+          axis.ticks = element_blank())
+  return(p)
+}
+
+
 
 
 

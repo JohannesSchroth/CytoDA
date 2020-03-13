@@ -3,6 +3,7 @@
 #' 
 #' 
 app_ui <- function(request) {
+  
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
@@ -11,35 +12,39 @@ app_ui <- function(request) {
                
                
                ##Data Formatting Panel----
-               navbarMenu('Data Import & Formatting',
+               tabPanel('Data Import & Formatting',
+                        
+                        sidebarLayout(
                           
-                          tabPanel('Summary Table', 
-                                   
-                                   sidebarLayout(
-                                     
-                                     sidebarPanel = sidebarPanel(
-                                       
-                                       #File input
-                                       fileInput("file", label = h3("File input"), multiple = T, accept = '.fcs'),
-                                       
-                                       fluidRow(column(5, verbatimTextOutput("file"))),
-                                       
-                                       selectInput('transformation_method', 'Select Transformation Method', c('Logicle', 'Biexponential'), multiple = F),
-                                       
-                                       actionButton('upload_data', 'Upload')),
-                                     
-                                     mainPanel = mainPanel(
-                                       column(DT::dataTableOutput('summary_table'), width = 6)
-                                     )
-                                   )),
+                          sidebarPanel = sidebarPanel(
+                            
+                            #File input
+                            fileInput("file", label = h3("File input"), multiple = T, accept = '.fcs'),
+                            
+                            fluidRow(column(5, verbatimTextOutput("file"))),
+                            
+                            selectInput('transformation_method', 'Select Transformation Method', c('Logicle', 'Biexponential'), multiple = F),
+                            
+                            actionButton('upload_data', 'Upload')),
                           
-                          tabPanel('Marker Expression', plotOutput('marker_expression')
+                          mainPanel = mainPanel(
+                            tabsetPanel(
+                              tabPanel('Summary Table', column(DT::dataTableOutput('summary_table'), width = 6)),
+                              tabPanel('Marker Expression', plotOutput('marker_expression') %>%
+                                         shinycssloaders::withSpinner()),
+                              tabPanel('Pairwise Expression', plotOutput('pairwise_expression', height = '800px')%>%
+                                         shinycssloaders::withSpinner())
+                            )
                           )
+                          
+                        )
                ),
                
                
                ##Dimensionality Reduction Panel---
-               navbarMenu('Dimensionality Reduction',
+               tabPanel('Dimensionality Reduction',
+                        
+                        tabsetPanel(
                           
                           tabPanel('PCA',
                                    
@@ -51,7 +56,7 @@ app_ui <- function(request) {
                                        
                                        selectInput('dimension_num_pca', 'Number of Dimensions', c('2D', '3D')),
                                        
-                                       selectInput('clustering_type', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
+                                       selectInput('clustering_type_pca', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
                                        
                                        actionButton('submit_variables_pca', 'Run'),
                                        
@@ -63,12 +68,18 @@ app_ui <- function(request) {
                                               plotlyOutput('pca_plot', height = '500px', width = '500px') %>% 
                                                 shinycssloaders::withSpinner()),
                                        column(6,
-                                              plotlyOutput('heatmap',height = '500px', width = '500px')),
+                                              plotlyOutput('pca_heatmap',height = '500px', width = '500px')),
                                        hr(),
                                        fluidRow(
-                                         selectInput('colour_col1', label = 'Colour by:', c()))
+                                         selectInput('colour_col1', label = 'Colour by:', c()),
+                                         downloadButton('download_tsne_data', 'Download tSNE Data'),
+                                         selectInput(inputId = 'show_clus_pca_heatmap', 'Clustering to Display', c())
+                                         )
+                                       )
                                      )
-                                   )
+                                   
+                                   
+                                   
                           ),
                           
                           
@@ -106,7 +117,7 @@ app_ui <- function(request) {
                                          hr(),
                                          fluidRow(
                                            selectInput('colour_col2', label = 'Colour by:', c()), 
-                                           downloadButton('download_tsne_data', 'Download tSNE Data')
+                                           downloadButton('download_pca_data', 'Download tSNE Data')
                                          )
                                        )
                                      )
@@ -143,8 +154,36 @@ app_ui <- function(request) {
                                          selectInput('colour_col3', label = 'Colour by:', c()))
                                      )
                                    )
+                          ),
+                          tabPanel('Diffusion Map',
+                                   
+                                   sidebarLayout(
+                                     
+                                     sidebarPanel = sidebarPanel(
+                                       
+                                       selectInput(inputId = 'variables_dm', label = 'Variables', choices = c(), multiple = T),
+                                       
+                                       selectInput('dimension_num_dm', 'Number of Dimensions', c('2D', '3D')),
+                                       
+                                       selectInput('clustering_type_dm', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
+                                       
+                                       actionButton('submit_variables_dm', 'Run'),
+                                       
+                                       width = 3),
+                                     
+                                     mainPanel = mainPanel(
+                                       column(6,
+                                              plotlyOutput('dm_plot', height = '500px', width = '500px') %>% 
+                                                shinycssloaders::withSpinner()),
+                                       # column(6,
+                                       #        plotlyOutput('heatmap',height = '500px', width = '500px')),
+                                       hr(),
+                                       fluidRow(
+                                         selectInput('colour_col_dm', label = 'Colour by:', c()))
+                                     )
+                                   )
                           )
-               ),
+                        )),
                
                tabPanel('Pseudotime',
                         fluidPage(
@@ -174,23 +213,4 @@ app_ui <- function(request) {
   )
 }
 
-
-
-#' Add external Resources to the Application
-golem_add_external_resources <- function(){
-  
-  add_resource_path(
-    'www', app_sys('app/www')
-  )
-  
-  tags$head(
-    favicon(),
-    bundle_resources(
-      path = app_sys('app/www'),
-      app_title = 'CytoDA'
-    )
-    # Add here other external resources
-    # for example, you can add shinyalert::useShinyalert() 
-  )
-}
 

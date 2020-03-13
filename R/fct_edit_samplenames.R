@@ -19,11 +19,11 @@ edit_samplenames <- function(data = NULL, input, output, session, ...) {
     samplename[[1]] <- rep(x = samples, times = s)
     
     edit_sample_names_table <- data.frame(Sample = as.character(unique(samplename[[1]])),
-                                          Name = unique(samplename[[1]]))
+                                          Name = as.character(unique(samplename[[1]])),
+                                          stringsAsFactors = FALSE)
     
     output$sample_names <- renderRHandsontable(
-      rhandsontable(edit_sample_names_table) %>%
-        hot_col('Name', strict = F)
+      rhandsontable(edit_sample_names_table)
     )
     
     

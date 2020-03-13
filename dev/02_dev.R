@@ -42,8 +42,7 @@ usethis::use_package('shinyBS')
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module(name = 'dimreduction' ) # Name of the module
-golem::add_module(name = "name_of_module2" ) # Name of the module
+golem::add_module(name = 'dim_reduction_pca')
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
@@ -51,6 +50,10 @@ golem::add_fct('fs_to_ff')
 golem::add_fct('transform_data')
 golem::add_fct('edit_samplenames')
 golem::add_fct('edit_colnames')
+golem::add_fct('calculate_clusters')
+golem::add_fct('calculate_pca')
+golem::add_fct('calculate_dm')
+golem::add_fct('calculate_heatmap')
 
 golem::add_utils( "helpers" )
 

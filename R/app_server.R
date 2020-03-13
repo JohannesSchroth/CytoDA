@@ -30,9 +30,9 @@ app_server <- function(input, output, session) {
       
       removeModal()
       
-      new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
+      rv$new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
       
-      rv$raw_data$SampleID <- as.character(new_sample_names$Name[match(rv$raw_data$SampleID, new_sample_names$Sample)])
+      rv$raw_data$SampleID <- as.character(rv$new_sample_names$Name[match(rv$raw_data$SampleID, rv$new_sample_names$Sample)])
       
       showModal(edit_colnames(data = rv$raw_data, fs = rv$flowset, input, output, session))
       
@@ -52,24 +52,10 @@ app_server <- function(input, output, session) {
     updateSelectInput(session = session, inputId = 'variables_pca', label = paste("Variables"), choices = colnames(rv$raw_data))
     updateSelectInput(session = session, inputId = 'variables_tsne', label = paste("Variables"), choices = colnames(rv$raw_data))
     updateSelectInput(session = session, inputId = 'variables_umap', label = paste("Variables"), choices = colnames(rv$raw_data))
+    updateSelectInput(session = session, inputId = 'variables_dm', label = paste("Variables"), choices = colnames(rv$raw_data))
     
-    output$summary_table <- DT::renderDataTable(DT::datatable(rv$raw_data, colnames = colnames(rv$raw_data)) %>% 
-                                                  formatRound(columns = colnames(rv$raw_data)))
+    updateSelectInput(session = session,inputId = 'colour_co1', label = 'Colour by:', choices = colnames(rv$raw_data))
     
-    output$marker_expression <- renderPlot({
-      
-      ggplot(melt(rv$raw_data, variable_name = 'Marker'), aes(x = value, fill = Marker)) +
-        facet_wrap(~Marker, ncol = ceiling(length(rv$raw_data)/4), scales = 'free') +
-        geom_density(alpha = 0.4) +
-        theme_classic() +
-        xlab('MFI') +
-        ylab('Density')
-      
-      
-      
-    })
-    
-    updateSelectInput(session = session,inputId = 'colour_col1', label = 'Colour by:', choices = colnames(rv$raw_data))
     updateSelectInput(session = session,inputId = 'colour_col2', label = 'Colour by:', choices = colnames(rv$raw_data))
     updateSelectInput(session = session,inputId = 'colour_col3', label = 'Colour by:', choices = colnames(rv$raw_data))
     
@@ -96,6 +82,27 @@ app_server <- function(input, output, session) {
       
       removeModal()
       
+      output$summary_table <- DT::renderDataTable(DT::datatable(rv$raw_data, colnames = colnames(rv$raw_data)) %>% 
+                                                    formatRound(columns = colnames(rv$raw_data)))
+      
+      output$marker_expression <- renderPlot({
+        
+        ggplot(melt(rv$raw_data, variable_name = 'Marker'), aes(x = value, fill = Marker)) +
+          facet_wrap(~Marker, ncol = ceiling(length(rv$raw_data)/4), scales = 'free') +
+          geom_density(alpha = 0.4) +
+          theme_classic() +
+          xlab('MFI') +
+          ylab('Density')
+        
+        
+        
+      })
+      
+      output$pairwise_expression <- renderPlot({ 
+        
+        GGally::ggpairs(data = rv$raw_data, upper = list(continuous = pairwise_plot), diag = NULL, lower = list(continuous = pairwise_plot))
+        
+      })
     })
   })
   
@@ -104,35 +111,17 @@ app_server <- function(input, output, session) {
   
   observeEvent(input$submit_variables_pca, {
     
-    pca <- prcomp(as.matrix(rv$raw_data[ ,input$variables_pca]), center = TRUE, scale. = TRUE)
-    rv$pca <- cbind(rv$raw_data, as.data.frame(pca$x[,1:3]))
+    updateSelectInput(session = session, inputId = 'show_clus_pca_heatmap', choices = input$clustering_type_pca, selected = input$clustering_type_pca[1])
     
-    if (input$dimension_num_pca == '2D') { 
-      
-      output$pca_plot <- renderPlotly({
-        
-        plot_ly(data = rv$pca, x = rv$pca$PC1, y = rv$pca$PC2,
-                marker = list(color = ~rv$raw_data[,input$colour_col1], colorscale = c('#FFE1A1', '#683531'))) %>%
-          add_markers()
-      })
-      
-    } else if (input$dimension_num_pca == '3D') {
-      output$pca_plot <- renderPlotly({
-        
-        plot_ly(data = rv$pca, x = rv$pca$PC1, y = rv$pca$PC2, z = rv$pca$PC3,
-                marker = list(color = ~rv$raw_data[,input$colour_col1], colorscale = c('#FFE1A1', '#683531'))) %>%
-          add_markers()
-      })
-      
-    }
+    rv$pca <- calculate_pca(input, output, session, data = rv$raw_data, dims = input$dimension_num_pca, vars = input$variables_pca)
     
-    if(any(input$clustering_type == 'Rphenograph') == TRUE) {
-      
-      phenograph(variables = input$variables_pca, K = 30)
-      
-    } else {
-      NULL
-    }
+    output$pca_heatmap <- calculate_heatmap(input, output, session, data = rv$pca, variables = input$variables_pca, show_clus = input$show_clus_pca_heatmap)
+    
+  })
+  
+  observeEvent(input$submit_variables_dm, {
+    
+    calculate_dm(input, output, session, data = rv$raw_data, dims = input$dimension_num_dm, vars = input$variables_dm)
   })
   
   
@@ -233,29 +222,6 @@ app_server <- function(input, output, session) {
   })
   
   
-  
-  
-  #   }
-  #   
-  #   
-  #   if (any(grepl('ClusterX', input$clustering_type)) == TRUE) {
-  #     
-  #     clusterx <- ClusterX(rv$raw_data[,input$variables, drop = FALSE])
-  #     rv$clusterx <- as.data.frame(cbind(rv$raw_data, 'ClusterX_Clusters' = clusterx$cluster))
-  #     
-  #   }
-  #   
-  #   if (any(grepl('DensVM', input$clustering_type)) == TRUE) {
-  #     
-  #     
-  #     #dens_vm <- DensVM(ydata = as.matrix(data$tSNE1_2D, data$tSNE2_2D), xdata = data[,input$variables])
-  #     #data[,'DensVM_Clusters'] <- dens_vm
-  #     
-  #   }
-  #   
-  #   
-  # })
-  
   observeEvent(input$submit_variables_umap, {
     
     set.seed(123)
@@ -307,21 +273,6 @@ app_server <- function(input, output, session) {
   # 
   #Clustering Methods----
   
-  
-  #if (any(grepl('ClusterX', input$clustering_type)) == TRUE) {
-  #  
-  #  clusterx <- ClusterX(data[,grep('tSNE', colnames(data)), drop = FALSE])
-  #  data <<- as.data.frame(cbind(data, 'ClusterX_Clusters' = clusterx$cluster))
-  #  
-  #}
-  
-  # if (any(grepl('DensVM', input$clustering_type)) == TRUE) {
-  #
-  #
-  #   #dens_vm <- DensVM(ydata = as.matrix(data$tSNE1_2D, data$tSNE2_2D), xdata = data[,input$variables])
-  #   #data[,'DensVM_Clusters'] <- dens_vm
-  #
-  # }
   
   #Pseudotime Methods---
   
