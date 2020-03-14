@@ -6,7 +6,7 @@ calculate_heatmap <- function(input, output, session, data, variables, show_clus
   
   heat <- as.data.frame(sapply(data[,variables], normalise))
 
-  heat <- cbind(heat, 'Clusters' = data[,'Phenograph_Clusters'])
+  heat <- cbind(heat, 'Clusters' = data$Phenograph_Clusters)
 
   print(heat)
     

@@ -1,17 +1,15 @@
 
 
 
-calculate_pca <- function(input, output, session, data, dims, vars) {
+calculate_pca <- function(input, output, session, data, dims, vars, cluster) {
   
   pca <- prcomp(as.matrix(data[,vars]), center = TRUE, scale. = TRUE)
   
   pca <- cbind(data, as.data.frame(pca$x[,1:3]))
   
-  clus <- calculate_clusters(input, output, session, data = data, vars = vars, cluster_type = input$clustering_type_pca)
-  
-  if(is.null(clus) != TRUE) {
+  if(is.null(cluster) != TRUE) {
     
-    pca <- data.frame(pca, clus)
+    pca <- data.frame(pca, cluster)
     
   }
   
@@ -35,6 +33,8 @@ calculate_pca <- function(input, output, session, data, dims, vars) {
     }
     
   )
+  
+  output$pca_heatmap <- calculate_heatmap(input, output, session, data = data, variables = input$variables_pca, show_clus = input$show_clus_pca_heatmap)
   return(pca)
 }
 

@@ -111,11 +111,11 @@ app_server <- function(input, output, session) {
   
   observeEvent(input$submit_variables_pca, {
     
+    rv$clusters <- calculate_clusters(input, output, session, data = rv$raw_data, vars = input$variables_pca, cluster_type = input$clustering_type_pca)
+    
     updateSelectInput(session = session, inputId = 'show_clus_pca_heatmap', choices = input$clustering_type_pca, selected = input$clustering_type_pca[1])
     
-    rv$pca <- calculate_pca(input, output, session, data = rv$raw_data, dims = input$dimension_num_pca, vars = input$variables_pca)
-    
-    output$pca_heatmap <- calculate_heatmap(input, output, session, data = rv$pca, variables = input$variables_pca, show_clus = input$show_clus_pca_heatmap)
+    rv$pca <- calculate_pca(input, output, session, data = rv$raw_data, dims = input$dimension_num_pca, vars = input$variables_pca, cluster = rv$clusters)
     
   })
   
