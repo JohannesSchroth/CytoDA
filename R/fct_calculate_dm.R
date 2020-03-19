@@ -2,19 +2,31 @@
 #' 
 
 
-calculate_dm <- function(input, output, session, data, vars, dims) {
+calculate_dm <- function(input, output, session, data, vars, dims, cluster_df) {
   
   dm <- destiny::DiffusionMap(data[,vars])
-  dm <- destiny::DPT(dm)
-  rv$dm <- cbind(data, data.frame('DC1' = dm$DC1, 'DC2' = dm$DC2, 'DC3' = dm$DC3))
-  d <- gsub('\\D','\\1', dims)
-  output$dm_plot <- renderPlotly({
+  dpt <- destiny::DPT(dm)
+  
+  d <- cbind(data, 'Clusters' = as.factor(cluster_df[,'Phenograph_Clusters']), 
+             'Pseudotime' = rank(dpt$dpt), 
+             'DC1' = eigenvectors(dm)[,1], 
+             'DC2' = eigenvectors(dm)[,2])
+  
+  d$Clusters <- with(d, reorder(Clusters, Pseudotime, median))
+  
+  output$dm_plot <- renderPlotly({ 
     
-    plot_ly(data = rv$dm, x = rv$dm$DC1, y = rv$dm$DC2, z = if(d == 3){rv$dm$DC3}else{NULL},
-            marker = list(color = ~rv$pca[,input$colour_col_dm], colorscale = c('#FFE1A1', '#683531'))) %>%
-      add_markers()
+    plot_ly(d, x = d$DC1, y = d$DC2, marker = list(color = d$Pseudotime)) 
   })
   
+  output$pseudotime_plot <- renderPlotly({ 
+    
+    plot_ly(d, x = ~d$Pseudotime, y = ~d$Clusters, 
+                                    type = 'box', boxpoints = "all", jitter = 0.3, 
+                                    color = ~d$Clusters)
+  })
+  
+  return(d)
   
   
   

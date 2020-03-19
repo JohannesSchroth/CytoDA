@@ -52,8 +52,11 @@ golem::add_fct('edit_samplenames')
 golem::add_fct('edit_colnames')
 golem::add_fct('calculate_clusters')
 golem::add_fct('calculate_pca')
+golem::add_fct('calculate_tsne')
+golem::add_fct('calculate_umap')
 golem::add_fct('calculate_dm')
 golem::add_fct('calculate_heatmap')
+
 
 golem::add_utils( "helpers" )
 

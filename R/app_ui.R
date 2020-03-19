@@ -46,6 +46,19 @@ app_ui <- function(request) {
                         
                         tabsetPanel(
                           
+                          tabPanel('Clustering',
+                                   sidebarLayout(
+                                     sidebarPanel = sidebarPanel(
+                                       
+                                       selectInput(inputId = 'variables_clustering', label = 'Variables', choices = c(), multiple = T),
+                                       selectInput('clustering_type', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
+                                       actionButton('run_clustering', 'Run')),
+                                     
+                                     mainPanel = mainPanel(
+                                       column(DT::dataTableOutput('clustering_table'), width = 6)
+                                     ))
+                          ),
+                          
                           tabPanel('PCA',
                                    
                                    sidebarLayout(
@@ -65,18 +78,18 @@ app_ui <- function(request) {
                                      mainPanel = mainPanel(
                                        
                                        column(6,
-                                              plotlyOutput('pca_plot', height = '500px', width = '500px') %>% 
+                                              plotlyOutput('pca_plot', height = '800px', width = '640px') %>% 
                                                 shinycssloaders::withSpinner()),
                                        column(6,
-                                              plotlyOutput('pca_heatmap',height = '500px', width = '500px')),
+                                              plotlyOutput('pca_heatmap', height = '800px', width = '640px')),
                                        hr(),
                                        fluidRow(
                                          selectInput('colour_col1', label = 'Colour by:', c()),
                                          downloadButton('download_tsne_data', 'Download tSNE Data'),
                                          selectInput(inputId = 'show_clus_pca_heatmap', 'Clustering to Display', c())
-                                         )
                                        )
                                      )
+                                   )
                                    
                                    
                                    
@@ -99,8 +112,6 @@ app_ui <- function(request) {
                                        
                                        sliderInput('max_iter_tsne', 'Number of Iterations', 100,10000,1000),
                                        
-                                       selectInput('clustering_type_tsne', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
-                                       
                                        actionButton('submit_variables_tsne', 'Run'),
                                        
                                        width = 3),
@@ -109,7 +120,7 @@ app_ui <- function(request) {
                                        
                                        fluidRow(
                                          column(6,
-                                                plotlyOutput('tSNE_plot', height = '800px', width = '640px') %>% 
+                                                plotlyOutput('tsne_plot', height = '800px', width = '640px') %>% 
                                                   shinycssloaders::withSpinner()),
                                          column(6,
                                                 plotlyOutput('tsne_heatmap',height = '800px', width = '640px')),
@@ -137,18 +148,16 @@ app_ui <- function(request) {
                                        
                                        sliderInput('min_dist_umap', 'Minimum Distance', 0.01,0.99,0.5),
                                        
-                                       selectInput('clustering_type', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
-                                       
                                        actionButton('submit_variables_umap', 'Run'),
                                        
                                        width = 3),
                                      
                                      mainPanel = mainPanel(
                                        column(6,
-                                              plotlyOutput('umap_plot', height = '500px', width = '500px') %>% 
+                                              plotlyOutput('umap_plot', height = '800px', width = '640px') %>% 
                                                 shinycssloaders::withSpinner()),
-                                       # column(6,
-                                       #        plotlyOutput('heatmap',height = '500px', width = '500px')),
+                                       column(6,
+                                              plotlyOutput('umap_heatmap', height = '800px', width = '640px')),
                                        hr(),
                                        fluidRow(
                                          selectInput('colour_col3', label = 'Colour by:', c()))
@@ -175,6 +184,9 @@ app_ui <- function(request) {
                                        column(6,
                                               plotlyOutput('dm_plot', height = '500px', width = '500px') %>% 
                                                 shinycssloaders::withSpinner()),
+                                       column(6,
+                                              plotlyOutput('pseudotime_plot', height = '500px', width = '500px') %>% 
+                                                shinycssloaders::withSpinner()),
                                        # column(6,
                                        #        plotlyOutput('heatmap',height = '500px', width = '500px')),
                                        hr(),
@@ -188,7 +200,7 @@ app_ui <- function(request) {
                tabPanel('Pseudotime',
                         fluidPage(
                           fluidRow(
-                            plotlyOutput('pseudotime_plot', height = '500px', width = '500px') %>%
+                            plotlyOutput('piuhiussseudotime_plot', height = '500px', width = '500px') %>%
                               shinycssloaders::withSpinner()),
                           hr(),
                           fluidRow(

@@ -14,6 +14,17 @@ which_selected <- function(){
 }
 
 
+which_dim <- function(x) {
+  
+  if (x == '2D') {
+    return(2)
+  } else if (x == '3D') {
+    return(3)
+  }
+  
+}
+
+
 normalise <- function(data) {
   
   dat <- c()
