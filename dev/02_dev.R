@@ -38,6 +38,7 @@ usethis::use_package('openCyto')
 usethis::use_package('ggsci')
 usethis::use_package('rhandsontable')
 usethis::use_package('shinyBS')
+usethis::use_package('sortable')
 
 
 ## Add modules ----

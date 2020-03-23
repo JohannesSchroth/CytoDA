@@ -55,7 +55,16 @@ app_ui <- function(request) {
                                        actionButton('run_clustering', 'Run')),
                                      
                                      mainPanel = mainPanel(
-                                       column(DT::dataTableOutput('clustering_table'), width = 6)
+                                       tabsetPanel(
+                                         tabPanel('Initial Clustering', column(DT::dataTableOutput('clustering_table'), width = 6)),
+                                         tabPanel('Merge Clusters', 
+                                                  orderInput('source', 'Source', items = c('1', '2'),
+                                                             as_source = TRUE, connect = 'dest'),
+                                                  orderInput('dest', 'Dest', items = NULL, placeholder = 'Drag items here...'),
+                                                  verbatimTextOutput('order')
+                                                  
+                                         )
+                                       )
                                      ))
                           ),
                           
