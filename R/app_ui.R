@@ -57,11 +57,17 @@ app_ui <- function(request) {
                                      mainPanel = mainPanel(
                                        tabsetPanel(
                                          tabPanel('Initial Clustering', column(DT::dataTableOutput('clustering_table'), width = 6)),
-                                         tabPanel('Merge Clusters', 
-                                                  orderInput('source', 'Source', items = c('1', '2'),
-                                                             as_source = TRUE, connect = 'dest'),
-                                                  orderInput('dest', 'Dest', items = NULL, placeholder = 'Drag items here...'),
-                                                  verbatimTextOutput('order')
+                                         tabPanel('Merge Clusters',
+                                                  
+                                                  actionButton('add_clus',label = 'Add Group'),
+                                                  
+                                                  actionButton('delete_clus', 'Delete'),
+                                                  
+                                                  div(id='cluster_placeholder'),
+                                                  
+                                                  actionButton('submit_merge_clus', 'Submit'),
+                                                  
+                                                  verbatimTextOutput('which')
                                                   
                                          )
                                        )

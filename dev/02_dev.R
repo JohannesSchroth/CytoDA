@@ -43,7 +43,7 @@ usethis::use_package('sortable')
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module(name = 'dim_reduction_pca')
+golem::add_module(name = 'merge_clus')
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
@@ -57,6 +57,7 @@ golem::add_fct('calculate_tsne')
 golem::add_fct('calculate_umap')
 golem::add_fct('calculate_dm')
 golem::add_fct('calculate_heatmap')
+golem::add_fct('merge_clus')
 
 
 golem::add_utils( "helpers" )

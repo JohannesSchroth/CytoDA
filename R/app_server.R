@@ -3,6 +3,7 @@
 packages_1 <- c('gridExtra','grid', 'ggplot2', 'umap', 'dplyr', 'reshape', 'RColorBrewer', 'cytofkit',
                 'FlowSOM', 'Rtsne', 'ggdendro', 'plotly', 'shiny', 'plotly', 'shinycssloaders', 'monocle',
                 'shinydashboard', 'DT', 'flowCore', 'openCyto', 'ggsci', 'rhandsontable', 'shinyBS', 'sortable')
+
 lapply(packages_1,library, character.only=TRUE)
 library(flowCore)
 
@@ -116,13 +117,19 @@ app_server <- function(input, output, session) {
     
     output$clustering_table <- DT::renderDataTable(DT::datatable(data.frame(table(rv$clusters))))
     
+    rv$clus_dat <- cbind(rv$raw_data, rv$clusters) 
+    
+    merge_clus(input, output, session, data = rv$clus_dat, clus_col = 'Phenograph_Clusters')
+    
   })
   
   
+  
+  
+  
+  
+  
   ##Dim Reduction Methods----
-  
-  
-  
   
   observeEvent(input$submit_variables_pca, {
     
