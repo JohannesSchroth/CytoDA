@@ -76,7 +76,6 @@ usethis::use_test( "app" )
 ## Vignette ----
 usethis::use_vignette("CytoDA")
 devtools::build_vignettes()
-
 ## Code coverage ----
 ## (You'll need GitHub there)
 usethis::use_github()

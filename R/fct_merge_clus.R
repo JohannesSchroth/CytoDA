@@ -24,15 +24,31 @@ merge_clus <- function(input, output, session, data, clus_col) {
     names_current <- c(names_current, new_name)
     names_reactive(names_current)
     
-    
   })
   
   
-  output$which <- renderPrint({
+  output$clustering_heatmap <- renderPlotly({
     
-    df <- lapply(clusters_reactive(), function(x) x() %>% unlist())
-    names(df) <-lapply(names_reactive(), function(x) x() %>% unlist())
-    stack(df)
+    heat_data <- data %>%
+      group_by(Phenograph_Clusters) %>%
+      summarise_if(is.numeric, median)
+    
+    heatmaply::heatmaply(heatmaply::normalize(heat_data))
+  })
+  
+  
+  
+  
+  
+  
+  output$which <- renderPrint({
+    if (is.null(names_reactive()) != TRUE) {
+      df <- lapply(clusters_reactive(), function(x) x() %>% unlist())
+      names(df) <-lapply(names_reactive(), function(x) x() %>% unlist())
+      stack(df)
+    } else {
+      print('Merge Clusters')
+    }
   })
   
   
@@ -61,6 +77,15 @@ merge_clus <- function(input, output, session, data, clus_col) {
     #   head(rv$data)
     # })
     
+    heat_data <- data %>%
+      group_by(Merged_Clusters) %>%
+      summarise_if(is.numeric, median)
+    
+    output$clustering_heatmap <- renderPlotly(
+      
+      heatmaply::heatmaply(heatmaply::normalize(heat_data))
+      
+    )
   })
   
   

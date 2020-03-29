@@ -40,39 +40,56 @@ app_ui <- function(request) {
                         )
                ),
                
+               tabPanel('Clustering',
+                        
+                        tabsetPanel(
+                          
+                          tabPanel('Clustering',
+                                   
+                                   sidebarLayout(
+                                     sidebarPanel = sidebarPanel(
+                                       
+                                       selectInput(inputId = 'variables_clustering', label = 'Variables', choices = c(), multiple = T),
+                                       selectInput('clustering_type', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
+                                       actionButton('run_clustering', 'Run')
+                                     ),
+                                     
+                                     mainPanel = mainPanel(
+                                       tabPanel('Initial Clustering', column(DT::dataTableOutput('clustering_table'), width = 6))
+                                     ))
+                          ),
+                          tabPanel('Merge Clusters',
+                                   
+                                   sidebarLayout(
+                                    
+                                     sidebarPanel = sidebarPanel(
+                                       
+                                       actionButton('add_clus',label = 'Add Group'),
+                                       
+                                       actionButton('delete_clus', 'Delete'),
+                                       
+                                       div(id='cluster_placeholder'),
+                                       
+                                       actionButton('submit_merge_clus', 'Submit'),
+                                       
+                                       verbatimTextOutput('which'),
+                                       
+                                     ),
+                                     mainPanel = mainPanel(
+                                       plotlyOutput('clustering_heatmap',height = '800px', width = '640px')
+                                     )
+                                   )
+                                   
+                          )
+                          
+                        )
+               ),
                
                ##Dimensionality Reduction Panel---
                tabPanel('Dimensionality Reduction',
                         
                         tabsetPanel(
                           
-                          tabPanel('Clustering',
-                                   sidebarLayout(
-                                     sidebarPanel = sidebarPanel(
-                                       
-                                       selectInput(inputId = 'variables_clustering', label = 'Variables', choices = c(), multiple = T),
-                                       selectInput('clustering_type', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
-                                       actionButton('run_clustering', 'Run')),
-                                     
-                                     mainPanel = mainPanel(
-                                       tabsetPanel(
-                                         tabPanel('Initial Clustering', column(DT::dataTableOutput('clustering_table'), width = 6)),
-                                         tabPanel('Merge Clusters',
-                                                  
-                                                  actionButton('add_clus',label = 'Add Group'),
-                                                  
-                                                  actionButton('delete_clus', 'Delete'),
-                                                  
-                                                  div(id='cluster_placeholder'),
-                                                  
-                                                  actionButton('submit_merge_clus', 'Submit'),
-                                                  
-                                                  verbatimTextOutput('which')
-                                                  
-                                         )
-                                       )
-                                     ))
-                          ),
                           
                           tabPanel('PCA',
                                    

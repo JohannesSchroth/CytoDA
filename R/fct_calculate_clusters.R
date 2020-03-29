@@ -5,7 +5,7 @@
 
 calculate_clusters <- function(input, output, session, data, vars, cluster_type) {
   
-  clusters <- data.frame(matrix(nrow = length(data[,1])))
+  clusters <- NULL
   
   if (any(grepl('Rphenograph', cluster_type)) == TRUE) {
     
