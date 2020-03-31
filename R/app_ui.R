@@ -50,7 +50,7 @@ app_ui <- function(request) {
                                      sidebarPanel = sidebarPanel(
                                        
                                        selectInput(inputId = 'variables_clustering', label = 'Variables', choices = c(), multiple = T),
-                                       selectInput('clustering_type', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
+                                       selectInput('clustering_type', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'ConsensusClusterPlus'), multiple = T),
                                        actionButton('run_clustering', 'Run')
                                      ),
                                      
@@ -64,6 +64,8 @@ app_ui <- function(request) {
                                     
                                      sidebarPanel = sidebarPanel(
                                        
+                                       selectInput('merge_which', label = 'Choose which clusters to merge:', choices = c(), multiple = F),
+                                       
                                        actionButton('add_clus',label = 'Add Group'),
                                        
                                        actionButton('delete_clus', 'Delete'),
@@ -76,7 +78,7 @@ app_ui <- function(request) {
                                        
                                      ),
                                      mainPanel = mainPanel(
-                                       plotlyOutput('clustering_heatmap',height = '800px', width = '640px')
+                                       plotlyOutput('clustering_heatmap',height = '800px', width = '1000px')
                                      )
                                    )
                                    

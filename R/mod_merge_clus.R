@@ -13,13 +13,13 @@ mod_merge_clus_ui <- function(id, clus_col_mod){
   tags$div(
     id=id,
     fluidRow(
-      column(3,
+      column(6,
              textInput(
                ns('name'), 
                label = 'Name',
                value = id)
       ),
-      column(3,
+      column(6,
              selectInput(
                ns('Clus'),
                label = 'Select clusters to merge', 

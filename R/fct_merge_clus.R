@@ -1,4 +1,4 @@
-merge_clus <- function(input, output, session, data, clus_col) {
+merge_clus <- function(input, output, session, data, clus_col, vars) {
   
   clusters_reactive <- reactiveVal(list())
   names_reactive <- reactiveVal(list())
@@ -11,7 +11,7 @@ merge_clus <- function(input, output, session, data, clus_col) {
     insertUI(
       selector = '#cluster_placeholder',
       where = 'afterEnd',
-      ui = mod_merge_clus_ui(id = paste0('mod',count()), clus_col_mod = unique(data['Phenograph_Clusters']))
+      ui = mod_merge_clus_ui(id = paste0('mod',count()), clus_col_mod = unique(clus_col))
     )
     
     current <- isolate(clusters_reactive())
@@ -30,15 +30,16 @@ merge_clus <- function(input, output, session, data, clus_col) {
   output$clustering_heatmap <- renderPlotly({
     
     heat_data <- data %>%
-      group_by(Phenograph_Clusters) %>%
+      group_by_(input$merge_which) %>%
+      select(vars) %>%
       summarise_if(is.numeric, median)
     
-    heatmaply::heatmaply(heatmaply::normalize(heat_data))
+    heatmaply::heatmaply(heatmaply::normalize(heat_data), 
+                         scale_fill_gradient_fun = ggplot2::scale_fill_gradient2(
+                           low="#4575B4", mid= 'white' , high='#D73027', midpoint=0.5, limits=c(0,1)
+                         )
+    )
   })
-  
-  
-  
-  
   
   
   output$which <- renderPrint({
@@ -73,17 +74,18 @@ merge_clus <- function(input, output, session, data, clus_col) {
     
     data['Merged_Clusters'] <- df[match(data[,clus_col], df[,1]), 2]
     
-    # output$which <- renderPrint({
-    #   head(rv$data)
-    # })
-    
     heat_data <- data %>%
       group_by(Merged_Clusters) %>%
+      select(vars) %>%
       summarise_if(is.numeric, median)
     
     output$clustering_heatmap <- renderPlotly(
       
-      heatmaply::heatmaply(heatmaply::normalize(heat_data))
+      heatmaply::heatmaply(heatmaply::normalize(heat_data), 
+                           scale_fill_gradient_fun = ggplot2::scale_fill_gradient2(
+                             low="#4575B4", mid= 'white' , high='#D73027', midpoint=0.5, limits=c(0,1)
+                           )
+      )
       
     )
   })

@@ -115,11 +115,13 @@ app_server <- function(input, output, session) {
     
     rv$clusters <- calculate_clusters(input, output, session, data = rv$raw_data, vars = input$variables_clustering, cluster_type = input$clustering_type)
     
+    updateSelectInput(session = session, inputId = 'merge_which', choices = input$clustering_type, selected = input$clustering_type[1])
+    
     output$clustering_table <- DT::renderDataTable(DT::datatable(data.frame(table(rv$clusters))))
     
     rv$clus_dat <- cbind(rv$raw_data, rv$clusters) 
     
-    merge_clus(input, output, session, data = rv$clus_dat, clus_col = 'Phenograph_Clusters')
+    merge_clus(input, output, session, data = rv$clus_dat, clus_col = rv$clus_dat[,input$merge_which], vars = input$variables_clustering)
     
   })
   
