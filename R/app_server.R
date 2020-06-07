@@ -9,7 +9,7 @@ library(flowCore)
 
 app_server <- function(input, output, session) {
   
-  options(shiny.maxRequestSize=1000*1024^2)
+  options(shiny.maxRequestSize=100000*1024^2)
   
   rv <- reactiveValues()
   
@@ -32,9 +32,9 @@ app_server <- function(input, output, session) {
     observeEvent(input$submit_samplenames, {
       
       removeModal()
-      
+    
       rv$new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
-      
+    
       rv$raw_data$SampleID <- as.character(rv$new_sample_names$Name[match(rv$raw_data$SampleID, rv$new_sample_names$Sample)])
       
       showModal(edit_colnames(data = rv$raw_data, fs = rv$flowset, input, output, session))

@@ -6,9 +6,9 @@
 
 edit_colnames <- function(data = NULL, fs = NULL, input, output, session) {
   
-  channels <- pData(flowCore::parameters(fs[[1]]))$name
+  channels <- flowCore::pData(flowCore::parameters(fs[[1]]))$name
   
-  antibodies <- pData(flowCore::parameters(fs[[1]]))$desc
+  antibodies <- flowCore::pData(flowCore::parameters(fs[[1]]))$desc
   
   suggested_colnames <- sapply(1:length(antibodies), function(i){
     if(is.na(antibodies[i])|antibodies[i]=="NA"){return(channels[i])}else{antibodies[i]}

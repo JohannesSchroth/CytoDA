@@ -61,7 +61,7 @@ app_ui <- function(request) {
                           tabPanel('Merge Clusters',
                                    
                                    sidebarLayout(
-                                    
+                                     
                                      sidebarPanel = sidebarPanel(
                                        
                                        selectInput('merge_which', label = 'Choose which clusters to merge:', choices = c(), multiple = F),
@@ -229,7 +229,8 @@ app_ui <- function(request) {
                                      )
                                    )
                           )
-                        )),
+                        )
+               ),
                
                tabPanel('Pseudotime',
                         fluidPage(

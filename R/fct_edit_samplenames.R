@@ -43,5 +43,7 @@ edit_samplenames <- function(data = NULL, input, output, session, ...) {
     
     return(samplename)
     
+  } else {
+    NULL
   }
 }
