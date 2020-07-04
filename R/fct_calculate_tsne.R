@@ -35,7 +35,7 @@ calculate_tsne <- function(input, output, session, data, vars, dims, cluster_df)
   output$download_tsne_data <- downloadHandler(
     
     filename = function() {
-      paste('tsne data', ".csv", sep = "")
+      paste('tsne_data_', Sys.Date(), ".csv", sep = "")
     },
     content = function(file) {
       write.csv(rv$tsne, file, row.names = FALSE)

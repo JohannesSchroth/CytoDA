@@ -25,12 +25,15 @@ app_ui <- function(request) {
                             
                             selectInput('transformation_method', 'Select Transformation Method', c('Logicle', 'Biexponential'), multiple = F),
                             
-                            actionButton('upload_data', 'Upload')),
+                            actionButton('upload_data', 'Upload'),
+                            
+                            bookmarkButton()
+                            ),
                           
                           mainPanel = mainPanel(
                             tabsetPanel(
-                              tabPanel('Summary Table', column(DT::dataTableOutput('summary_table'), width = 6)),
-                              tabPanel('Marker Expression', plotOutput('marker_expression') %>%
+                              tabPanel('Summary Table', DT::dataTableOutput('summary_table', width = '80%')),
+                              tabPanel('Marker Expression', plotOutput('marker_expression', height = '700px', width = '800px') %>%
                                          shinycssloaders::withSpinner()),
                               tabPanel('Pairwise Expression', plotOutput('pairwise_expression', height = '800px')%>%
                                          shinycssloaders::withSpinner())
@@ -119,7 +122,7 @@ app_ui <- function(request) {
                                        hr(),
                                        fluidRow(
                                          selectInput('colour_col1', label = 'Colour by:', c()),
-                                         downloadButton('download_tsne_data', 'Download tSNE Data'),
+                                         downloadButton('download_pca_data', 'Download PCA Data'),
                                          selectInput(inputId = 'show_clus_pca_heatmap', 'Clustering to Display', c())
                                        )
                                      )
@@ -162,7 +165,7 @@ app_ui <- function(request) {
                                          hr(),
                                          fluidRow(
                                            selectInput('colour_col2', label = 'Colour by:', c()), 
-                                           downloadButton('download_pca_data', 'Download tSNE Data')
+                                           downloadButton('download_tsne_data', 'Download tSNE Data')
                                          )
                                        )
                                      )
@@ -194,7 +197,8 @@ app_ui <- function(request) {
                                               plotlyOutput('umap_heatmap', height = '800px', width = '640px')),
                                        hr(),
                                        fluidRow(
-                                         selectInput('colour_col3', label = 'Colour by:', c()))
+                                         selectInput('colour_col3', label = 'Colour by:', c()),
+                                         downloadButton('download_umap_data', 'Download UMAP Data'),)
                                      )
                                    )
                           ),

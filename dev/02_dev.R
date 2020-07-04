@@ -39,7 +39,7 @@ usethis::use_package('ggsci')
 usethis::use_package('rhandsontable')
 usethis::use_package('shinyBS')
 usethis::use_package('sortable')
-
+usethis::use_package('ggridges')
 
 ## Add modules ----
 ## Create a module infrastructure in R/

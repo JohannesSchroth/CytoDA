@@ -26,7 +26,7 @@ calculate_pca <- function(input, output, session, data, dims, vars, cluster) {
   output$download_pca_data <- downloadHandler(
     
     filename = function() {
-      paste('pca data', ".csv", sep = "")
+      paste('pca_data_', Sys.Date(), ".csv", sep = "")
     },
     content = function(file) {
       write.csv(pca, file, row.names = FALSE)

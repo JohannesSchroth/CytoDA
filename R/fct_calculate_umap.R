@@ -30,5 +30,15 @@ calculate_umap <- function(input, output, session, data, vars, dims, cluster_df)
   })
   
   return(umap)
-  
+ 
+  output$download_umap_data <- downloadHandler(
+    
+    filename = function() {
+      paste('umap_data_',Sys.Date(), ".csv", sep = "")
+    },
+    content = function(file) {
+      write.csv(rv$umap, file, row.names = FALSE)
+    }
+    
+  ) 
 }
