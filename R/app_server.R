@@ -13,14 +13,14 @@ app_server <- function(input, output, session) {
   
   rv <- reactiveValues()
   
-  onBookmark(function(state) {
-    state$values$currentSum <- rv$raw_data
-  })
-  
-  # Read values from state$values when we restore
-  onRestore(function(state) {
-    vals$sum <- rv$raw_data
-  })
+  # onBookmark(function(state) {
+  #   state$values$currentSum <- rv$raw_data
+  # })
+  # 
+  # # Read values from state$values when we restore
+  # onRestore(function(state) {
+  #   vals$sum <- rv$raw_data
+  # })
   
   
   observeEvent(input$upload_data, {
@@ -38,18 +38,19 @@ app_server <- function(input, output, session) {
     rv$raw_data['SampleID'] <- s[[1]]
     
     showModal(s[[2]])
+    print('1')
     
-    observeEvent(input$submit_samplenames, {
-      
-      removeModal()
-      
-      rv$new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
-      
-      rv$raw_data$SampleID <- as.character(rv$new_sample_names$Name[match(rv$raw_data$SampleID, rv$new_sample_names$Sample)])
-      
-      showModal(edit_colnames(data = rv$raw_data, fs = rv$flowset, input, output, session))
-      
-    })
+  })
+  
+  observeEvent(input$submit_samplenames, {
+     
+    removeModal()
+    
+    rv$new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
+    
+    rv$raw_data$SampleID <- as.character(rv$new_sample_names$Name[match(rv$raw_data$SampleID, rv$new_sample_names$Sample)])
+    
+    showModal(edit_colnames(data = rv$raw_data, fs = rv$flowset, input, output, session))
     
   })
   

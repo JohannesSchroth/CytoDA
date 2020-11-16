@@ -26,7 +26,7 @@ edit_samplenames <- function(data = NULL, input, output, session, ...) {
       rhandsontable(edit_sample_names_table)
     )
     
-    
+    print('2')
     samplename[[2]] <-
       
       modalDialog(
