@@ -26,33 +26,27 @@ app_server <- function(input, output, session) {
   observeEvent(input$upload_data, {
     
     rv$flowset <- flowCore::read.flowSet(files = input$file$datapath)
-    
     rv$flowframe <- fs_to_ff(fs = rv$flowset)
-    
     rv$flowframe_transformed <- transform_data(ff = rv$flowframe, method = input$transformation_method)
-    
     rv$raw_data <- as.data.frame(flowCore::exprs(rv$flowframe_transformed))
-    
-    s <- edit_samplenames(data = rv$raw_data, input, output, session)
-    
-    rv$raw_data['SampleID'] <- s[[1]]
-    
-    showModal(s[[2]])
-    print('1')
-    
+    # s <- edit_samplenames(data = rv$raw_data, input, output, session)
+    # print('4')  
+    # rv$raw_data['SampleID'] <- s[[1]]
+    # print('5')
+    # showModal(s[[2]])
+    showModal(edit_colnames(data = rv$raw_data, fs = rv$flowset, input, output, session))
   })
   
-  observeEvent(input$submit_samplenames, {
-     
-    removeModal()
-    
-    rv$new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
-    
-    rv$raw_data$SampleID <- as.character(rv$new_sample_names$Name[match(rv$raw_data$SampleID, rv$new_sample_names$Sample)])
-    
-    showModal(edit_colnames(data = rv$raw_data, fs = rv$flowset, input, output, session))
-    
-  })
+  # observeEvent(input$submit_samplenames, {
+  #    
+  #   # removeModal()
+  #   
+  #   rv$new_sample_names <- as.data.frame(hot_to_r(input$sample_names))
+  #   
+  #   rv$raw_data$SampleID <- as.character(rv$new_sample_names$Name[match(rv$raw_data$SampleID, rv$new_sample_names$Sample)])
+  #   
+  #   
+  # })
   
   observeEvent(input$submit_colnames, {
     
@@ -138,18 +132,14 @@ app_server <- function(input, output, session) {
   })
   
   
-  
-  
-  
-  
-  
+
   ##Dim Reduction Methods----
   
   observeEvent(input$submit_variables_pca, {
     
     updateSelectInput(session = session, inputId = 'show_clus_pca_heatmap', choices = colnames(rv$clusters), selected = colnames(rv$clusters)[1])
     
-    rv$pca <- calculate_pca(input, output, session, data = rv$raw_data, dims = input$dimension_num_pca, vars = input$variables_pca, cluster = rv$clusters)
+    rv$pca <- calculate_pca(input, output, session, data = rv$clus_dat, dims = input$dimension_num_pca, vars = input$variables_pca, cluster = rv$clusters)
     
     output$pca_heatmap <- calculate_heatmap(input, output, session, data = rv$pca, vars = input$variables_pca, show_clus = input$show_clus_pca_heatmap)
     

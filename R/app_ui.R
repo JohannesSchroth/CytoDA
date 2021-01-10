@@ -122,8 +122,8 @@ app_ui <- function(request) {
                                        hr(),
                                        fluidRow(
                                          selectInput('colour_col1', label = 'Colour by:', c()),
-                                         downloadButton('download_pca_data', 'Download PCA Data'),
-                                         selectInput(inputId = 'show_clus_pca_heatmap', 'Clustering to Display', c())
+                                         selectInput(inputId = 'show_clus_pca_heatmap', 'Clustering to Display', c()),
+                                         downloadButton('download_pca_data', 'Download PCA Data')
                                        )
                                      )
                                    )

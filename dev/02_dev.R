@@ -23,7 +23,6 @@ usethis::use_package('umap')
 usethis::use_package('dplyr')
 usethis::use_package('reshape')
 usethis::use_package('RColorBrewer')
-usethis::use_package('cytofkit')
 usethis::use_package('FlowSOM')
 usethis::use_package('Rtsne')
 usethis::use_package('ggdendro')
@@ -40,7 +39,7 @@ usethis::use_package('rhandsontable')
 usethis::use_package('shinyBS')
 usethis::use_package('sortable')
 usethis::use_package('ggridges')
-
+ 
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module(name = 'merge_clus')

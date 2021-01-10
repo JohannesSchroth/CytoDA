@@ -17,7 +17,7 @@ calculate_clusters <- function(input, output, session, data, vars, cluster_type)
   if (any(grepl('Rphenograph', cluster_type)) == TRUE) {
     
     phenograph <- cytofkit::Rphenograph(data[,vars], k = 10)
-    clusters[['Rphenograph']] <- as.character(phenograph$membership)
+    clusters[['Rphenograph_Clusters']] <- as.character(phenograph$membership)
     
   } 
   
@@ -26,7 +26,7 @@ calculate_clusters <- function(input, output, session, data, vars, cluster_type)
     
     clusterx <- cytofkit::ClusterX(data[,vars])
     
-    clusters[['ClusterX']] <- as.character(clusterx$cluster)
+    clusters[['ClusterX_Clusters']] <- as.character(clusterx$cluster)
     
   }
   
@@ -55,7 +55,7 @@ calculate_clusters <- function(input, output, session, data, vars, cluster_type)
     
     code_clustering <- mc[[10]]$consensusClass
     
-    clusters[['ConsensusClusterPlus']] <- as.character(code_clustering[som$map$mapping[,1]])
+    clusters[['ConsensusClusterPlus_Clusters']] <- as.character(code_clustering[som$map$mapping[,1]])
   }
   
   # Return clusters data frame
