@@ -20,7 +20,7 @@ Imports:
     dplyr,
     reshape,
     RColorBrewer,
-    cytofkit,
+    cytofkit2,
     FlowSOM,
     Rtsne,
     ggdendro,

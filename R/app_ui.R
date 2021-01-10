@@ -1,17 +1,22 @@
 #' Application User Interface
 #' 
-#' 
-#' 
+
+packages_1 <- c('gridExtra','grid', 'ggplot2', 'cytofkit2', 'umap', 'dplyr', 'reshape', 'RColorBrewer',
+                'FlowSOM', 'Rtsne', 'ggdendro', 'plotly', 'shiny', 'plotly', 'shinycssloaders', 'monocle',
+                'shinydashboard', 'DT', 'flowCore', 'openCyto', 'ggsci', 'rhandsontable', 'shinyBS', 'sortable')
+
+lapply(packages_1, require, character.only=TRUE)
+
 app_ui <- function(request) {
   
   tagList(
-    # Leave this function for adding external resources
+    
     golem_add_external_resources(),
-    # List the first level UI elements here 
+    
     navbarPage(inverse= TRUE, 'CytoDA', 
                
                
-               ##Data Formatting Panel----
+               ## ---------------------------- Data Formatting Panel ----------------------------
                tabPanel('Data Import & Formatting',
                         
                         sidebarLayout(
@@ -43,6 +48,8 @@ app_ui <- function(request) {
                         )
                ),
                
+               
+               ## ---------------------------- Clustering Panel ----------------------------
                tabPanel('Clustering',
                         
                         tabsetPanel(
@@ -90,7 +97,7 @@ app_ui <- function(request) {
                         )
                ),
                
-               ##Dimensionality Reduction Panel---
+               ## ---------------------------- Dimensionality Reduction Panel ----------------------------
                tabPanel('Dimensionality Reduction',
                         
                         tabsetPanel(
@@ -236,6 +243,7 @@ app_ui <- function(request) {
                         )
                ),
                
+               ## ---------------------------- Pseudotime Panel ----------------------------
                tabPanel('Pseudotime',
                         fluidPage(
                           fluidRow(
@@ -248,12 +256,13 @@ app_ui <- function(request) {
                         )
                ),
                
+               ## ---------------------------- Download Panel ----------------------------
                tabPanel('Download', 
                         fluidPage(
                           bookmarkButton()
                         )),
                
-               ##Summary Panel----
+               ## ---------------------------- Summary Panel ----------------------------
                tabPanel('Summary of Project', 
                         fluidPage(h1('Cytometry Analysis Tools'),
                                   br(),

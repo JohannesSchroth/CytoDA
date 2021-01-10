@@ -16,7 +16,7 @@ calculate_clusters <- function(input, output, session, data, vars, cluster_type)
   # Phenograph clustering method
   if (any(grepl('Rphenograph', cluster_type)) == TRUE) {
     
-    phenograph <- cytofkit::Rphenograph(data[,vars], k = 10)
+    phenograph <- cytofkit2::Rphenograph(data[,vars], k = 10)
     clusters[['Rphenograph_Clusters']] <- as.character(phenograph$membership)
     
   } 
@@ -24,7 +24,7 @@ calculate_clusters <- function(input, output, session, data, vars, cluster_type)
   # ClusterX clustering method
   if (any(grepl('ClusterX', cluster_type)) == TRUE) {
     
-    clusterx <- cytofkit::ClusterX(data[,vars])
+    clusterx <- cytofkit2::ClusterX(data[,vars])
     
     clusters[['ClusterX_Clusters']] <- as.character(clusterx$cluster)
     

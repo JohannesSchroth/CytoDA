@@ -1,10 +1,10 @@
 #' Application Server
 
-packages_1 <- c('gridExtra','grid', 'ggplot2', 'umap', 'dplyr', 'reshape', 'RColorBrewer', 'cytofkit',
+packages_1 <- c('gridExtra','grid', 'ggplot2', 'cytofkit2', 'umap', 'dplyr', 'reshape', 'RColorBrewer',
                 'FlowSOM', 'Rtsne', 'ggdendro', 'plotly', 'shiny', 'plotly', 'shinycssloaders', 'monocle',
                 'shinydashboard', 'DT', 'flowCore', 'openCyto', 'ggsci', 'rhandsontable', 'shinyBS', 'sortable')
 
-lapply(packages_1,library, character.only=TRUE)
+lapply(packages_1, require, character.only=TRUE)
 library(flowCore)
 
 app_server <- function(input, output, session) {
@@ -103,8 +103,6 @@ app_server <- function(input, output, session) {
           theme_classic() +
           xlab('MFI') +
           ylab('Density')
-        
-        
         
       })
       
