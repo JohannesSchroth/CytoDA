@@ -197,11 +197,8 @@ app_ui <- function(request) {
                                        width = 3),
                                      
                                      mainPanel = mainPanel(
-                                       column(6,
-                                              plotlyOutput('umap_plot', height = '800px', width = '640px') %>% 
-                                                shinycssloaders::withSpinner()),
-                                       column(6,
-                                              plotlyOutput('umap_heatmap', height = '800px', width = '640px')),
+                                              plotlyOutput('umap_plot'),
+                                              plotlyOutput('umap_heatmap'),
                                        hr(),
                                        fluidRow(
                                          selectInput('colour_col3', label = 'Colour by:', c()),

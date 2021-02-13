@@ -29,7 +29,7 @@ app_server <- function(input, output, session) {
     rv$flowframe <- fs_to_ff(fs = rv$flowset)
     rv$flowframe_transformed <- transform_data(ff = rv$flowframe, method = input$transformation_method)
     rv$raw_data <- as.data.frame(flowCore::exprs(rv$flowframe_transformed))
-    # s <- edit_samplenames(data = rv$raw_data, input, output, session)
+    #s <- edit_samplenames(data = rv$raw_data, input, output, session)
     # print('4')  
     # rv$raw_data['SampleID'] <- s[[1]]
     # print('5')
