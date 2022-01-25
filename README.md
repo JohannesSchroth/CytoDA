@@ -1,4 +1,4 @@
-<img src="inst/app/icon.svg" width="181px" align="right" />
+<img src="inst/app/icon.png" width="181px" align="right" />
 
 # CytoDA
 
