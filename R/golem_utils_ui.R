@@ -1,13 +1,13 @@
 #' Add external Resources to the Application
 golem_add_external_resources <- function(){
   
-  add_resource_path(
+  addResourcePath(
     'www', app_sys('app/www')
   )
   
   tags$head(
-    favicon(),
-    bundle_resources(
+    golem::favicon(),
+    golem::bundle_resources(
       path = app_sys('app/www'),
       app_title = 'CytoDA'
     )

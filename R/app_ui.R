@@ -23,6 +23,9 @@ app_ui <- function(request) {
                           
                           sidebarPanel = sidebarPanel(
                             
+                            h3('Run Using Demo Data'),
+                            checkboxInput('demo_data', 'Human Bone Marrow Cells - Levine et al. 2015 (asinh tranformed)', FALSE),
+                            
                             #File input
                             fileInput("file", label = h3("File input"), multiple = T, accept = '.fcs'),
                             
@@ -30,18 +33,16 @@ app_ui <- function(request) {
                             
                             selectInput('transformation_method', 'Select Transformation Method', c('Logicle', 'Biexponential'), multiple = F),
                             
-                            actionButton('upload_data', 'Upload'),
-                            
-                            bookmarkButton()
-                            ),
+                            actionButton('upload_data', 'Run')
+                          ),
                           
                           mainPanel = mainPanel(
                             tabsetPanel(
-                              tabPanel('Summary Table', DT::dataTableOutput('summary_table', width = '80%')),
-                              tabPanel('Marker Expression', plotOutput('marker_expression', height = '700px', width = '800px') %>%
+                              tabPanel('Marker Expression', plotlyOutput('marker_expression', height = '800px', width = '1200px') %>%
                                          shinycssloaders::withSpinner()),
-                              tabPanel('Pairwise Expression', plotOutput('pairwise_expression', height = '800px')%>%
-                                         shinycssloaders::withSpinner())
+                              tabPanel('Pairwise Expression', plotOutput('pairwise_expression', height = '800px') %>%
+                                         shinycssloaders::withSpinner()),
+                              tabPanel('Summary Table', DT::dataTableOutput('summary_table', width = '80%'))
                             )
                           )
                           
@@ -52,48 +53,29 @@ app_ui <- function(request) {
                ## ---------------------------- Clustering Panel ----------------------------
                tabPanel('Clustering',
                         
-                        tabsetPanel(
-                          
-                          tabPanel('Clustering',
-                                   
-                                   sidebarLayout(
-                                     sidebarPanel = sidebarPanel(
-                                       
-                                       selectInput(inputId = 'variables_clustering', label = 'Variables', choices = c(), multiple = T),
-                                       selectInput('clustering_type', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'ConsensusClusterPlus'), multiple = T),
-                                       actionButton('run_clustering', 'Run')
-                                     ),
-                                     
-                                     mainPanel = mainPanel(
-                                       tabPanel('Initial Clustering', column(DT::dataTableOutput('clustering_table'), width = 6))
-                                     ))
+                        sidebarLayout(
+                          sidebarPanel = sidebarPanel(
+                            
+                            selectInput(inputId = 'variables_clustering', label = 'Variables', choices = c(), multiple = T),
+                            selectInput('clustering_type', 'Select Clustering Algorithm', c('Rphenograph'), selected = 'Rphenograph', multiple = F),
+                            actionButton('run_clustering', 'Run')
                           ),
-                          tabPanel('Merge Clusters',
-                                   
-                                   sidebarLayout(
-                                     
-                                     sidebarPanel = sidebarPanel(
-                                       
-                                       selectInput('merge_which', label = 'Choose which clusters to merge:', choices = c(), multiple = F),
-                                       
-                                       actionButton('add_clus',label = 'Add Group'),
-                                       
-                                       actionButton('delete_clus', 'Delete'),
-                                       
-                                       div(id='cluster_placeholder'),
-                                       
-                                       actionButton('submit_merge_clus', 'Submit'),
-                                       
-                                       verbatimTextOutput('which'),
-                                       
-                                     ),
-                                     mainPanel = mainPanel(
-                                       plotlyOutput('clustering_heatmap',height = '800px', width = '1000px')
-                                     )
-                                   )
-                                   
-                          )
                           
+                          mainPanel = mainPanel(
+                            
+                            tabsetPanel(
+                              
+                              tabPanel('Heatmap',
+                                       column(plotlyOutput('cluster_heatmap',height = '800px', width = '1000px'), width = 12)
+                              ),
+                              
+                              tabPanel('Cluster Frequencies',
+                                       column(plotlyOutput('cluster_pie', height = '640px', width = '1000px'), width = 12),
+                                       hr())
+                              
+                            )
+                            
+                          )
                         )
                ),
                
@@ -113,8 +95,6 @@ app_ui <- function(request) {
                                        
                                        selectInput('dimension_num_pca', 'Number of Dimensions', c('2D', '3D')),
                                        
-                                       selectInput('clustering_type_pca', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
-                                       
                                        actionButton('submit_variables_pca', 'Run'),
                                        
                                        width = 3),
@@ -122,14 +102,12 @@ app_ui <- function(request) {
                                      mainPanel = mainPanel(
                                        
                                        column(6,
-                                              plotlyOutput('pca_plot', height = '800px', width = '640px') %>% 
-                                                shinycssloaders::withSpinner()),
+                                              plotlyOutput('pca_plot', height = '640px', width = '640px')),
                                        column(6,
-                                              plotlyOutput('pca_heatmap', height = '800px', width = '640px')),
+                                              plotlyOutput('pca_heatmap', height = '740px', width = '740px')),
                                        hr(),
                                        fluidRow(
                                          selectInput('colour_col1', label = 'Colour by:', c()),
-                                         selectInput(inputId = 'show_clus_pca_heatmap', 'Clustering to Display', c()),
                                          downloadButton('download_pca_data', 'Download PCA Data')
                                        )
                                      )
@@ -164,10 +142,9 @@ app_ui <- function(request) {
                                        
                                        fluidRow(
                                          column(6,
-                                                plotlyOutput('tsne_plot', height = '800px', width = '640px') %>% 
-                                                  shinycssloaders::withSpinner()),
+                                                plotlyOutput('tsne_plot', height = '640px', width = '640px')),
                                          column(6,
-                                                plotlyOutput('tsne_heatmap',height = '800px', width = '640px')),
+                                                plotlyOutput('tsne_heatmap',height = '740px', width = '740px')),
                                          
                                          hr(),
                                          fluidRow(
@@ -197,73 +174,21 @@ app_ui <- function(request) {
                                        width = 3),
                                      
                                      mainPanel = mainPanel(
-                                              plotlyOutput('umap_plot'),
-                                              plotlyOutput('umap_heatmap'),
-                                       hr(),
                                        fluidRow(
-                                         selectInput('colour_col3', label = 'Colour by:', c()),
-                                         downloadButton('download_umap_data', 'Download UMAP Data'),)
-                                     )
-                                   )
-                          ),
-                          tabPanel('Diffusion Map',
-                                   
-                                   sidebarLayout(
-                                     
-                                     sidebarPanel = sidebarPanel(
-                                       
-                                       selectInput(inputId = 'variables_dm', label = 'Variables', choices = c(), multiple = T),
-                                       
-                                       selectInput('dimension_num_dm', 'Number of Dimensions', c('2D', '3D')),
-                                       
-                                       selectInput('clustering_type_dm', 'Select Clustering Algorithm', c('Rphenograph', 'ClusterX', 'DensVM'), multiple = T),
-                                       
-                                       actionButton('submit_variables_dm', 'Run'),
-                                       
-                                       width = 3),
-                                     
-                                     mainPanel = mainPanel(
-                                       column(6,
-                                              plotlyOutput('dm_plot', height = '500px', width = '500px') %>% 
-                                                shinycssloaders::withSpinner()),
-                                       column(6,
-                                              plotlyOutput('pseudotime_plot', height = '500px', width = '500px') %>% 
-                                                shinycssloaders::withSpinner()),
-                                       # column(6,
-                                       #        plotlyOutput('heatmap',height = '500px', width = '500px')),
-                                       hr(),
-                                       fluidRow(
-                                         selectInput('colour_col_dm', label = 'Colour by:', c()))
+                                         column(6,
+                                                plotlyOutput('umap_plot', height = '640px', width = '640px')),
+                                         column(6,
+                                                plotlyOutput('umap_heatmap',height = '740px', width = '740px')),
+                                         
+                                         hr(),
+                                         fluidRow(
+                                           selectInput('colour_col3', label = 'Colour by:', c()), 
+                                           downloadButton('download_umap_data', 'Download UMAP Data')
+                                         )
+                                       )
                                      )
                                    )
                           )
-                        )
-               ),
-               
-               ## ---------------------------- Pseudotime Panel ----------------------------
-               tabPanel('Pseudotime',
-                        fluidPage(
-                          fluidRow(
-                            plotlyOutput('piuhiussseudotime_plot', height = '500px', width = '500px') %>%
-                              shinycssloaders::withSpinner()),
-                          hr(),
-                          fluidRow(
-                            
-                          )
-                        )
-               ),
-               
-               ## ---------------------------- Download Panel ----------------------------
-               tabPanel('Download', 
-                        fluidPage(
-                          bookmarkButton()
-                        )),
-               
-               ## ---------------------------- Summary Panel ----------------------------
-               tabPanel('Summary of Project', 
-                        fluidPage(h1('Cytometry Analysis Tools'),
-                                  br(),
-                                  p(strong('This app was developed to assist in the analysis of single cell data.'))
                         )
                )
     )

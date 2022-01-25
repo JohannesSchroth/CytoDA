@@ -40,6 +40,7 @@ usethis::use_package('rhandsontable')
 usethis::use_package('shinyBS')
 usethis::use_package('sortable')
 usethis::use_package('ggridges')
+usethis::use_package('HDCytoData')
  
 ## Add modules ----
 ## Create a module infrastructure in R/

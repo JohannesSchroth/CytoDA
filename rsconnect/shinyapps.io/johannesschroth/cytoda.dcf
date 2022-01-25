@@ -5,6 +5,7 @@ account: johannesschroth
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3455593
-bundleId: 4167217
+bundleId: 5507124
 url: https://johannesschroth.shinyapps.io/cytoda/
-when: 1612188798.85762
+when: 1643133272.4079
+lastSyncTime: 1643133272.40791
