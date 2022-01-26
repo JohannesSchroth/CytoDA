@@ -3,7 +3,7 @@
 
 calculate_umap <- function(input, output, session, data, vars, dims, cluster_df) {
   
-  withProgress(message = 'Calculating tSNE', value = 0, {
+  withProgress(message = 'Calculating UMAP', value = 0, {
     
     set.seed(123)
     
